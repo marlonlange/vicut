@@ -19,6 +19,34 @@ def extractClip(start, end, filename):
                            targetname=f"{filename}.flv")
 
 
+def cutAction(csv):
+    with open(csv, 'r') as file:
+        reader = csv.reader(file, skipinitialspace=True)
+        for row in reader:
+            filename = row[0]
+            convertedTime = convertTimeToSeconds(row[1], row[2])
+            extractClip(convertedTime[0], convertedTime[1], filename)
+
+
+def downloadAction(csv):
+    with open(csv, 'r') as file:
+        reader = csv.reader(file, skipinitialspace=True)
+        for row in reader:
+            filename = row[0]
+            url = row[1]
+            command = f"ffmpeg -i \"{url}\" -c copy -bsf:a aac_adtstoasc \"{filename}.mp4\""
+            os.system(command)
+            sleep(10)
+
+
+def process(args):
+    print(args)
+    if (args.action == "Download"):
+        downloadAction(args.file)
+    else:
+        cutAction(args.file)
+
+
 @Gooey(required_cols=1)
 def main():
     parser = GooeyParser(
@@ -39,20 +67,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-# with open('download.csv', 'r') as file:
-#     reader = csv.reader(file, skipinitialspace=True)
-#     for row in reader:
-#         filename = row[0]
-#         url = row[1]
-#         command = f"ffmpeg -i \"{url}\" -c copy -bsf:a aac_adtstoasc \"{filename}.mp4\""
-#         os.system(command)
-#         sleep(10)
-
-# with open('timestamps.csv', 'r') as file:
-#     reader = csv.reader(file, skipinitialspace=True)
-#     for row in reader:
-#         filename = row[0]
-#         convertedTime = convertTimeToSeconds(row[1], row[2])
-#         extractClip(convertedTime[0], convertedTime[1], filename)
