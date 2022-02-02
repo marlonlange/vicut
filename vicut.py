@@ -14,27 +14,23 @@ def convertTimeToSeconds(t1, t2):
     return [deltaStart.total_seconds(), deltaStart.total_seconds() + deltaEnd.total_seconds()]
 
 
-def extractClip(start, end, filename):
-    ffmpeg_extract_subclip("test.flv", start, end,
-                           targetname=f"{filename}.flv")
-
-
-def cutAction(csv):
-    with open(csv, 'r') as file:
+def cutAction(output, csvFile):
+    with open(csvFile, 'r') as file:
         reader = csv.reader(file, skipinitialspace=True)
         for row in reader:
             filename = row[0]
             convertedTime = convertTimeToSeconds(row[1], row[2])
-            extractClip(convertedTime[0], convertedTime[1], filename)
+            ffmpeg_extract_subclip(
+                "test.flv", convertedTime[0], convertedTime[1], targetname=f"{output}/{filename}.flv")
 
 
-def downloadAction(csv):
-    with open(csv, 'r') as file:
+def downloadAction(output, csvFile):
+    with open(csvFile, 'r') as file:
         reader = csv.reader(file, skipinitialspace=True)
         for row in reader:
             filename = row[0]
             url = row[1]
-            command = f"ffmpeg -i \"{url}\" -c copy -bsf:a aac_adtstoasc \"{filename}.mp4\""
+            command = f"ffmpeg -i \"{url}\" -c copy -bsf:a aac_adtstoasc \"{output}/{filename}.mp4\""
             os.system(command)
             sleep(10)
 
@@ -42,7 +38,7 @@ def downloadAction(csv):
 def process(args):
     print(args)
     if (args.action == "Download"):
-        downloadAction(args.file)
+        downloadAction(args.output, args.file)
     else:
         cutAction(args.file)
 
