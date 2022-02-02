@@ -24,17 +24,17 @@ def main():
     parser = GooeyParser(
         description="Tool for cutting or downloading video files based on CSV")
     parser.add_argument(
-        "Output Directory", help="The output destination for the video files", widget="DirChooser")
+        'output', metavar="Output Directory", help="The output destination for the video files", widget="DirChooser")
     parser.add_argument(
-        "CSV File", help="Name of the file containing timestamps or stream urls", widget="FileChooser")
+        'file', metavar="CSV File", help="Name of the file containing timestamps or stream urls", widget="FileChooser")
     parser.add_argument(
-        "Action", help="The action to perform", choices=['Cut', 'Download'])
+        'action', metavar="Action", help="The action to perform", choices=['Cut', 'Download'])
     parser.add_argument(
-        '-Settings',
+        '-save-settings',
+        metavar="Settings",
         action='store_true',
         help='Save these settings for next usage')
-    args = parser.parse_args()
-    print(args)
+    process(parser.parse_args())
 
 
 if __name__ == "__main__":
